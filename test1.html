@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Тест ДВС ВАЗ 21126</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',Arial,sans-serif;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh;padding:20px;overflow-x:hidden}
+.container{max-width:700px;margin:0 auto;background:white;border-radius:25px;padding:30px;box-shadow:0 25px 70px rgba(0,0,0,0.4)}
+h1{text-align:center;color:#333;margin-bottom:10px;font-size:28px}
+.subtitle{text-align:center;color:#666;margin-bottom:30px;font-size:14px}
+.progress{background:#e0e0e0;height:12px;border-radius:10px;margin-bottom:30px;overflow:hidden}
+.progress-bar{background:linear-gradient(90deg,#667eea 0%,#764ba2 100%);height:100%;transition:width .5s}
+.question-counter{text-align:center;color:#667eea;font-weight:bold;margin-bottom:20px;font-size:18px}
+.question{display:none}
+.question.active{display:block}
+.question-text{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:white;padding:20px;border-radius:15px;margin-bottom:25px;font-size:18px;font-weight:bold}
+.options{display:grid;gap:15px}
+.option{background:#f5f5f5;border:3px solid #ddd;padding:18px 20px;border-radius:12px;cursor:pointer;font-size:16px;transition:.3s}
+.option.correct{background:#4caf50;color:white;border-color:#4caf50}
+.option.wrong{background:#f44336;color:white;border-color:#f44336}
+.feedback{margin:20px 0;padding:18px;border-radius:12px;font-weight:bold;font-size:16px;display:none}
+.feedback.show{display:block}
+.feedback.correct{background:#c8e6c9;color:#2e7d32}
+.feedback.wrong{background:#ffcdd2;color:#c62828}
+.next-btn{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:white;border:none;padding:18px 45px;border-radius:12px;font-size:18px;font-weight:bold;cursor:pointer;display:none;margin:25px auto}
+.next-btn.show{display:block}
+.result{display:none;text-align:center}
+.result.show{display:block}
+.score{font-size:80px;font-weight:bold;margin:30px 0}
+.grade{font-size:36px;margin:25px 0;padding:25px;border-radius:15px;font-weight:bold}
+.grade.excellent{background:#4caf50;color:white}
+.grade.good{background:#8bc34a;color:white}
+.grade.satisfactory{background:#ffc107;color:white}
+.grade.fail{background:#f44336;color:white}
+.restart-btn{background:#764ba2;color:white;border:none;padding:18px 50px;border-radius:12px;font-size:20px;font-weight:bold;cursor:pointer;margin-top:25px}
+</style>
+</head>
+<body>
+
+<div class="container">
+<h1>🔧 Тест: ДВС ВАЗ 21126 🚗</h1>
+<div class="subtitle">Разборка, сборка, измерение степени затяжки</div>
+
+<div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+<div class="question-counter" id="counter"></div>
+<div id="quizContainer"></div>
+
+<div class="result" id="result">
+<h2>🎉 Тест завершён! 🎉</h2>
+<div class="score" id="score"></div>
+<div class="grade" id="grade"></div>
+<button class="restart-btn" onclick="location.reload()">🔄 Пройти ещё раз</button>
+</div>
+</div>
+
+<script>
+const questions=[
+{question:"Как называется деталь, которая совершает возвратно-поступательное движение в цилиндре?",options:["Коленвал","Поршень","Маховик","Распредвал"],correct:1},
+{question:"Какая деталь соединяет поршень с коленчатым валом?",options:["Клапан","Гильза","Шатун","Толкатель"],correct:2},
+{question:"Что такое ГБЦ?",options:["Блок цилиндров","Поддон картера","Головка блока цилиндров","Крышка клапанов"],correct:2},
+{question:"Какой момент затяжки болтов ГБЦ ВАЗ 21126 на первом этапе?",options:["10 Н·м","20 Н·м","50 Н·м","100 Н·м"],correct:1},
+{question:"Как затягиваются болты ГБЦ ВАЗ 21126?",options:["В один этап","В два этапа","В несколько этапов с доворотом на угол","От руки без контроля"],correct:2},
+{question:"Каким инструментом измеряют момент затяжки?",options:["Рожковый ключ","Динамометрический ключ","Газовый ключ","Отвёртка"],correct:1},
+{question:"Что нужно сделать ПЕРЕД разборкой ДВС?",options:["Покрасить двигатель","Слить масло и охлаждающую жидкость","Заменить колёса","Накачать шины"],correct:1},
+{question:"В каком порядке затягивают болты ГБЦ?",options:["Слева направо","Снаружи к центру","Произвольно","От центра к краям"],correct:3},
+{question:"Сколько цилиндров у двигателя ВАЗ 21126?",options:["2 цилиндра","3 цилиндра","4 цилиндра","6 цилиндров"],correct:2},
+{question:"Объём двигателя ВАЗ 21126:",options:["1.4 литра","1.6 литра","1.8 литра","2.0 литра"],correct:1},
+
+{question:"Какой допустимый осевой люфт коленчатого вала ВАЗ 21126?",options:["До 1 мм","0,06–0,26 мм","0,5–1 мм","Не нормируется"],correct:1},
+{question:"Допустимый зазор в замке поршневых колец составляет:",options:["0,01–0,05 мм","0,25–0,45 мм","1 мм","Зазор не проверяется"],correct:1},
+{question:"К чему может привести недостаточный момент затяжки шатунных болтов?",options:["Повышению мощности","Проворачиванию вкладышей","Экономии топлива","Улучшению компрессии"],correct:1},
+{question:"Перед установкой масляного насоса необходимо:",options:["Прокрутить его всухую","Заполнить маслом","Нагреть строительным феном","Ударить для посадки"],correct:1},
+{question:"Стрелка на днище поршня при установке должна быть направлена:",options:["К маховику","К передней части двигателя","В сторону ГБЦ","Без разницы"],correct:1},
+{question:"При превышении момента затяжки болтов ГБЦ возможно:",options:["Повышение ресурса","Деформация ГБЦ","Снижение расхода топлива","Увеличение компрессии"],correct:1},
+{question:"Что обязательно проверяют перед установкой новой прокладки ГБЦ?",options:["Цвет прокладки","Плоскость блока и ГБЦ","Вес прокладки","Толщину масла"],correct:1},
+{question:"Перед первым запуском после сборки двигателя необходимо:",options:["Сразу дать 4000 об/мин","Провернуть коленвал вручную","Ослабить ремень ГРМ","Снять свечи"],correct:1},
+{question:"При установке вкладышей коленвала необходимо следить за:",options:["Совпадением замков и масляных каналов","Цветом металла","Длиной коленвала","Температурой воздуха"],correct:0},
+{question:"Основная причина перегрева двигателя после сборки:",options:["Низкое давление в шинах","Нарушение герметичности системы охлаждения","Грязный кузов","Неправильный цвет масла"],correct:1}
+];
+
+let currentQuestion=0;
+let score=0;
+let answered=false;
+
+function loadQuestion(){
+const container=document.getElementById('quizContainer');
+const q=questions[currentQuestion];
+document.getElementById('counter').textContent=`Вопрос ${currentQuestion+1} из ${questions.length}`;
+container.innerHTML=`
+<div class="question active">
+<div class="question-text">${q.question}</div>
+<div class="options">
+${q.options.map((opt,index)=>`
+<div class="option" onclick="checkAnswer(${index})">
+<strong>${String.fromCharCode(65+index)})</strong> ${opt}
+</div>`).join('')}
+</div>
+<div class="feedback" id="feedback"></div>
+<button class="next-btn" id="nextBtn" onclick="nextQuestion()">
+${currentQuestion<questions.length-1?'Следующий вопрос →':'Показать результат 🎯'}
+</button>
+</div>`;
+updateProgress();
+answered=false;
+}
+
+function checkAnswer(selected){
+if(answered)return;
+answered=true;
+const q=questions[currentQuestion];
+const options=document.querySelectorAll('.option');
+const feedback=document.getElementById('feedback');
+const nextBtn=document.getElementById('nextBtn');
+
+options.forEach((opt,index)=>{
+opt.style.pointerEvents='none';
+if(index===q.correct)opt.classList.add('correct');
+});
+
+if(selected===q.correct){
+score++;
+feedback.innerHTML='<strong>✓ Правильно!</strong> Отличный выбор!';
+feedback.className='feedback correct show';
+}else{
+options[selected].classList.add('wrong');
+feedback.innerHTML=`<strong>✗ Неправильно.</strong> Правильный ответ: <strong>${String.fromCharCode(65+q.correct)}) ${q.options[q.correct]}</strong>`;
+feedback.className='feedback wrong show';
+}
+
+nextBtn.classList.add('show');
+}
+
+function nextQuestion(){
+currentQuestion++;
+if(currentQuestion<questions.length)loadQuestion();
+else showResult();
+}
+
+function updateProgress(){
+document.getElementById('progressBar').style.width=((currentQuestion+1)/questions.length)*100+'%';
+}
+
+function showResult(){
+document.getElementById('quizContainer').style.display='none';
+document.getElementById('counter').style.display='none';
+const resultDiv=document.getElementById('result');
+document.getElementById('score').textContent=`${score} / ${questions.length}`;
+
+let gradeText,gradeClass;
+if(score>=18){gradeText='🏆 Отлично!';gradeClass='excellent';}
+else if(score>=15){gradeText='👍 Хорошо!';gradeClass='good';}
+else if(score>=10){gradeText='👌 Удовлетворительно';gradeClass='satisfactory';}
+else{gradeText='📚 Нужно повторить материал';gradeClass='fail';}
+
+const gradeDiv=document.getElementById('grade');
+gradeDiv.textContent=gradeText;
+gradeDiv.className='grade '+gradeClass;
+resultDiv.classList.add('show');
+}
+
+loadQuestion();
+</script>
+
+</body>
+</html>

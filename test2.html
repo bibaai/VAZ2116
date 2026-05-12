@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Тест ДВС ВАЗ 21126</title>
+<style>
+body{font-family:Arial;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);padding:10px;margin:0}
+.container{max-width:600px;margin:20px auto;background:#fff;border-radius:15px;padding:20px}
+h1{text-align:center;color:#333;font-size:24px}
+.question{margin:20px 0;padding:15px;background:#f5f5f5;border-radius:10px;border-left:5px solid #667eea}
+.question h3{color:#667eea;margin-bottom:15px}
+.option{background:#fff;border:2px solid #ddd;padding:12px;margin:8px 0;border-radius:8px;cursor:pointer;font-size:16px}
+.option:active{background:#e0e0e0}
+.correct{background:#4caf50!important;color:#fff!important;border-color:#4caf50!important}
+.wrong{background:#f44336!important;color:#fff!important;border-color:#f44336!important}
+.result{display:none;text-align:center;padding:30px}
+.result.show{display:block}
+.score{font-size:48px;font-weight:bold;color:#667eea;margin:20px 0}
+button{background:#667eea;color:#fff;border:none;padding:15px 30px;border-radius:10px;font-size:18px;cursor:pointer;margin:10px}
+button:active{background:#5568d3}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>🔧 Тест: ДВС ВАЗ 21126 🚗</h1>
+<div id="quiz"></div>
+<div class="result" id="result">
+<h2>✅ Тест завершён!</h2>
+<div class="score" id="scoreText"></div>
+<p id="gradeText" style="font-size:24px;font-weight:bold"></p>
+<button onclick="location.reload()">🔄 Пройти снова</button>
+</div>
+<div style="text-align:center">
+<button id="checkBtn" onclick="checkAnswers()">Проверить ответы</button>
+</div>
+</div>
+
+<script>
+const questions=[
+{q:"Как называется деталь, которая совершает возвратно-поступательное движение в цилиндре?",options:["Коленвал","Поршень","Маховик","Распредвал"],correct:1},
+{q:"Какая деталь соединяет поршень с коленчатым валом?",options:["Клапан","Гильза","Шатун","Толкатель"],correct:2},
+{q:"Что такое ГБЦ?",options:["Блок цилиндров","Поддон картера","Головка блока цилиндров","Крышка клапанов"],correct:2},
+{q:"Какой момент затяжки болтов ГБЦ ВАЗ 21126 на первом этапе?",options:["10 Н·м","20 Н·м","50 Н·м","100 Н·м"],correct:1},
+{q:"Как затягиваются болты ГБЦ ВАЗ 21126?",options:["В один этап","В два этапа","В несколько этапов с доворотом","От руки"],correct:2},
+{q:"Каким инструментом измеряют момент затяжки?",options:["Рожковый ключ","Динамометрический ключ","Газовый ключ","Отвёртка"],correct:1},
+{q:"Что нужно сделать ПЕРЕД разборкой ДВС?",options:["Покрасить двигатель","Слить масло и охлаждающую жидкость","Заменить колёса","Накачать шины"],correct:1},
+{q:"В каком порядке затягивают болты ГБЦ?",options:["Слева направо","Снаружи к центру","Произвольно","От центра к краям"],correct:3},
+{q:"Сколько цилиндров у двигателя ВАЗ 21126?",options:["2","3","4","6"],correct:2},
+{q:"Объём двигателя ВАЗ 21126:",options:["1.4 л","1.6 л","1.8 л","2.0 л"],correct:1},
+
+/* УСЛОЖНЁННЫЕ */
+
+{q:"Какой допустимый осевой люфт коленчатого вала ВАЗ 21126?",options:["До 1 мм","0,06–0,26 мм","0,5–1 мм","Не нормируется"],correct:1},
+{q:"Допустимый зазор в замке поршневых колец составляет:",options:["0,01–0,05 мм","0,25–0,45 мм","1 мм","Зазор не проверяется"],correct:1},
+{q:"К чему может привести недостаточный момент затяжки шатунных болтов?",options:["Повышению мощности","Проворачиванию вкладышей","Экономии топлива","Улучшению компрессии"],correct:1},
+{q:"Перед установкой масляного насоса необходимо:",options:["Прокрутить его всухую","Заполнить маслом","Нагреть строительным феном","Ударить для посадки"],correct:1},
+{q:"Стрелка на днище поршня при установке должна быть направлена:",options:["К маховику","К передней части двигателя","В сторону ГБЦ","Без разницы"],correct:1},
+{q:"При превышении момента затяжки болтов ГБЦ возможно:",options:["Повышение ресурса","Деформация ГБЦ","Снижение расхода топлива","Увеличение компрессии"],correct:1},
+{q:"Что обязательно проверяют перед установкой новой прокладки ГБЦ?",options:["Цвет прокладки","Плоскость блока и ГБЦ","Вес прокладки","Толщину масла"],correct:1},
+{q:"Перед первым запуском после сборки двигателя необходимо:",options:["Сразу дать 4000 об/мин","Провернуть коленвал вручную","Ослабить ремень ГРМ","Снять свечи"],correct:1},
+{q:"При установке вкладышей коленвала необходимо следить за:",options:["Совпадением замков и масляных каналов","Цветом металла","Длиной коленвала","Температурой воздуха"],correct:0},
+{q:"Основная причина перегрева двигателя после сборки:",options:["Низкое давление в шинах","Нарушение герметичности системы охлаждения","Грязный кузов","Неправильный цвет масла"],correct:1}
+];
+
+let userAnswers=[];
+
+function loadQuiz(){
+const quizDiv=document.getElementById('quiz');
+let html='';
+questions.forEach((item,index)=>{
+html+=`<div class="question">
+<h3>Вопрос ${index+1}</h3>
+<p><strong>${item.q}</strong></p>
+${item.options.map((opt,i)=>`<div class="option" onclick="selectAnswer(${index},${i},this)">${String.fromCharCode(65+i)}) ${opt}</div>`).join('')}
+</div>`;
+});
+quizDiv.innerHTML=html
+}
+
+function selectAnswer(questionIndex,optionIndex,element){
+const questionDiv=element.parentElement;
+const options=questionDiv.querySelectorAll('.option');
+options.forEach(opt=>{
+opt.style.background='white';
+opt.style.borderColor='#ddd'
+});
+element.style.background='#e3f2fd';
+element.style.borderColor='#667eea';
+userAnswers[questionIndex]=optionIndex
+}
+
+function checkAnswers(){
+let score=0;
+questions.forEach((item,index)=>{
+const questionDiv=document.querySelectorAll('.question')[index];
+const options=questionDiv.querySelectorAll('.option');
+options.forEach((opt,i)=>{
+if(i===item.correct){opt.classList.add('correct')}
+if(userAnswers[index]===i&&i!==item.correct){opt.classList.add('wrong')}
+});
+if(userAnswers[index]===item.correct){score++}
+});
+document.getElementById('quiz').classList.add('hidden');
+document.getElementById('checkBtn').classList.add('hidden');
+const resultDiv=document.getElementById('result');
+const scoreText=document.getElementById('scoreText');
+const gradeText=document.getElementById('gradeText');
+
+scoreText.textContent=score+' / '+questions.length;
+
+let grade='';
+if(score>=18)grade='🏆 Отлично!';
+else if(score>=15)grade='👍 Хорошо!';
+else if(score>=10)grade='👌 Удовлетворительно';
+else grade='📚 Нужно повторить';
+
+gradeText.textContent=grade;
+gradeText.style.color=score>=15?'#4caf50':(score>=10?'#ff9800':'#f44336');
+resultDiv.classList.add('show')
+}
+
+loadQuiz();
+</script>
+</body>
+</html>
